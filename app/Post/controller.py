@@ -1,4 +1,4 @@
-from flask_restx import Resource, Namespace
+from flask_restx import Resource, Namespace, fields
 from flask import request, session
 from .model import Post
 from app import db
@@ -12,13 +12,29 @@ import time
 
 api = Namespace('Posts', description='API for getting and posting posts')
 
+submitPost_model = api.model('Submit Response', {
+    'msg' : fields.String,
+    'caption' : fields.String,
+    'user_id': fields.Integer
+})
+submitPost_fail = api.model('Submit fail', {
+    'code': fields.String
+})
+submitPost_body = api.model('Resource', {
+    'file': fields.Raw(required=True, description='Blob file of image'),
+    'caption': fields.String(description='caption of post'),
+    'userId': fields.Integer(required=True, description='User id of user who posted.')
+})
+
 
 @api.route('/submitPost')
 class SubmitPost(Resource):
     @jwt_required
+    @api.response(200, 'Success', submitPost_model)
+    @api.response(400, 'Failure', submitPost_fail)
+    @api.doc(body=submitPost_body)
     def post(self):
-        ''' Receive the post request for submitting a post
-            Should auth token in the header and must be validated - TBI'''
+        ''' Receive a post from the client - auth token needed'''
         try:
             image = request.files.get('file')
             caption = request.form.get('caption')
@@ -33,12 +49,12 @@ class SubmitPost(Resource):
 
         except Exception as e:
             print(e)
-            return {'code' : 'failed to post'}
+            return {'code' : 'failed to post'}, 400
         
         return {'msg': 'successfully posted post', 'caption': caption, 
                 'user_id': user_id}
 
-@api.route('/id/<int:postId>')
+@api.route('/id/<int:postId>', doc=False)
 class GetPostId(Resource):
     def get(self, postId):
         ''' Get a single Post by its ID'''

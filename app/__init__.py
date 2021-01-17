@@ -8,17 +8,17 @@ from flask_jwt_extended import JWTManager
 from app.config import Config
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-class MyApi(Api):
-    @property
-    def specs_url(self):
-        """Monkey patch for HTTPS"""
-        scheme = 'http' if '5000' in self.base_url else 'https'
-        return url_for(self.endpoint('specs'), _external=True, _scheme=scheme)
+# class MyApi(Api):
+#     @property
+#     def specs_url(self):
+#         """Monkey patch for HTTPS"""
+#         scheme = 'http' if '5000' in self.base_url else 'https'
+#         return url_for(self.endpoint('specs'), _external=True, _scheme=scheme)
 
 db = SQLAlchemy()
 ma = Marshmallow()
 migrate = Migrate()
-api = MyApi(doc='/api/doc')
+api = Api(doc='/api/doc')
 jwt = JWTManager()
 
 def create_app():

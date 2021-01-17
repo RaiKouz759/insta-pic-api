@@ -1,4 +1,4 @@
-from flask_restx import Resource, Namespace
+from flask_restx import Resource, Namespace, fields
 from .schema import LoginSchema, RegisterSchema
 from flask import request, jsonify
 from marshmallow import ValidationError
@@ -13,8 +13,20 @@ api = Namespace('Users', description='API for user access and endpoints')
 def format_message(message, subtitle='message'):
     return {subtitle : message}
 
+user_model = api.model('User Model', {
+    'username': fields.String(required=True, example='cowboy123'),
+    'password': fields.String(required=True)
+})
+nested_model = api.model('Nested user', {'username': fields.String, 'user_id': fields.Integer})
+user_response_model = api.model('User Response Model', {
+    'user': fields.Nested(model=nested_model),
+    'token': fields.String
+})
+
 @api.route('/register')
 class UserRegistration(Resource):
+    @api.expect(user_model)
+    @api.response(200, 'Successfully Register', user_response_model)
     def post(self):
         body = request.json
         try:
@@ -48,6 +60,9 @@ class UserRegistration(Resource):
 
 @api.route('/login')
 class UserLogin(Resource):
+    @api.expect(user_model)
+    @api.response(200, 'Successfully Logged In', user_response_model)
+    @api.response(401, 'Wrong credentials', api.model('Wrong Credentials', {'message': fields.String}))
     def post(self):
         body = request.json
         print(body)
