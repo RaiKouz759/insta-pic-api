@@ -9,3 +9,5 @@ class Config(object):
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') 
     JWT_BLACKLIST_ENABLED = True
     JWT_BLACKLIST_TOKEN_CHECKS = ['access', 'refresh']
+
+    PROPAGATE_EXCEPTIONS = True
