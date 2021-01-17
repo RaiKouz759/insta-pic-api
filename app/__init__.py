@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
@@ -8,10 +8,17 @@ from flask_jwt_extended import JWTManager
 from app.config import Config
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+class MyApi(Api):
+    @property
+    def specs_url(self):
+        """Monkey patch for HTTPS"""
+        scheme = 'http' if '5000' in self.base_url else 'https'
+        return url_for(self.endpoint('specs'), _external=True, _scheme=scheme)
+
 db = SQLAlchemy()
 ma = Marshmallow()
 migrate = Migrate()
-api = Api()
+api = MyApi()
 jwt = JWTManager()
 
 def create_app():
@@ -21,7 +28,7 @@ def create_app():
     
     # proxy fix
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
-    
+
     # Initialize Plugins
     db.init_app(app)
     ma.init_app(app)
