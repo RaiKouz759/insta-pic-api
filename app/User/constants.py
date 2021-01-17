@@ -1,0 +1,1 @@
+JWT_EXPIRY_TIME = 900 #seconds

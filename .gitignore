@@ -1,0 +1,8 @@
+__pycache__/
+.vscode/
+.env
+.env.save
+.pylintrc
+note_taking.py
+.flaskenv
+migrations

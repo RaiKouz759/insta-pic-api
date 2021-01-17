@@ -1,0 +1,2 @@
+MAX_LATEST_POSTS = 20
+
