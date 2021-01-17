@@ -88,19 +88,22 @@ class SubscribePost(Resource):
         ''' For client to get updates
             client sends most up to date post id
             updates are sent back if available '''
-        post_id = request.form.get('latestId')
-        if not post_id:
-            return {'error': 'no post id in subscription'}, 400
-        post = Post.query.get(post_id)
-        if not post:
-            return {'error': 'no such post id'}, 400
+        try:
+            post_id = request.form.get('latestId')
+            if not post_id:
+                return {'error': 'no post id in subscription'}, 400
+            post = Post.query.get(post_id)
+            if not post:
+                return {'error': 'no such post id'}, 400
 
-        new_posts = Post.query.filter(Post.id > post_id).order_by(Post.id.asc()).all()
-        if new_posts:
-            post_schema = PostSchema(many=True)
-            return post_schema.dump(new_posts)
+            new_posts = Post.query.filter(Post.id > post_id).order_by(Post.id.asc()).all()
+            if new_posts:
+                post_schema = PostSchema(many=True)
+                return post_schema.dump(new_posts)
 
-        return {'error': 'no new posts'}, 502
+            return {'error': 'no new posts'}, 502
+        except Exception:
+            return {'error': 'stop subscribing'}, 401
 
 
 # @api.route('/testToken')

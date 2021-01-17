@@ -76,7 +76,7 @@ class UserLogin(Resource):
                 return format_message('User {} does not exist'.format(credentials['username'])), 401
             # validate password
             if User.verify_hash(credentials['password'], current_user.password): 
-                access_token = create_access_token(identity = credentials['username'], expires_delta=datetime.timedelta(seconds=JWT_EXPIRY_TIME))
+                access_token = create_access_token(identity = credentials['username'], expires_delta=datetime.timedelta(seconds=20))
                 return {'user' : {'username': current_user.username, 'user_id': current_user.id},
                         'token': access_token
                         }
