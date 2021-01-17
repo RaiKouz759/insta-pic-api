@@ -6,6 +6,7 @@ from flask_restx import Api
 # from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from app.config import Config
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 db = SQLAlchemy()
 ma = Marshmallow()
@@ -17,7 +18,10 @@ def create_app():
     # initialize the core application
     app = Flask(__name__)
     app.config.from_object(Config)
-
+    
+    # proxy fix
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1)
+    
     # Initialize Plugins
     db.init_app(app)
     ma.init_app(app)
