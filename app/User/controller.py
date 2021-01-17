@@ -72,7 +72,7 @@ class UserLogin(Resource):
             return jsonify(err.messages)
 
       
-@api.route('/users')
+@api.route('/users', doc=False)
 class AllUsers(Resource):
     def get(self):
         return {'message': 'List of users'}
@@ -81,7 +81,7 @@ class AllUsers(Resource):
         return {'message': 'Delete all users'}
 
 
-@api.route('/getUsername')
+@api.route('/getUsername', doc=False)
 class UserUsername(Resource):
     @jwt_required
     def get(self):
