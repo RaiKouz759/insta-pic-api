@@ -38,7 +38,7 @@ def create_app():
     migrate.init_app(app, db)
     api.init_app(app)
     jwt.init_app(app)
-    jwt._set_error_handler_callbacks(api)
+    # jwt._set_error_handler_callbacks(api)
 
     # import models here so that they get migrated. 
     from app.Post.model import Post
