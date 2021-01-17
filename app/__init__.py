@@ -18,7 +18,7 @@ class MyApi(Api):
 db = SQLAlchemy()
 ma = Marshmallow()
 migrate = Migrate()
-api = MyApi()
+api = MyApi(doc='/api/doc')
 jwt = JWTManager()
 
 def create_app():
